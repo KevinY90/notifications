@@ -1,7 +1,27 @@
 const router = require('express').Router();
-const {User} = require('../../models');
+const {User, Notification} = require('../../models');
+
 
 module.exports = router;
+
+
+router.get('/:id', (req, res, next) => {
+    User.findByPk(req.params.id)
+    .then(user => res.json(user))
+    .catch(e => next(e))
+});
+
+router.get('/notifications/:id', (req, res, next) => {
+    const userId = req.params.id
+    Notification.findAll({
+        where: { userId }
+    })
+    .then(userNotifications => {
+        console.log(userNotifications);
+        res.json(userNotifications)
+    })
+    .catch(e => next(e))
+})
 
 router.post('/create', (req, res) => {
     const { username, email } = req.body;

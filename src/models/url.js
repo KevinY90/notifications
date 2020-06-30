@@ -1,4 +1,4 @@
-const { STRING } = require('sequelize');
+const { STRING, BOOLEAN, INTEGER } = require('sequelize');
 const db = require('./connect');
 
 const Url = db.define('url', {
@@ -6,23 +6,24 @@ const Url = db.define('url', {
         type: STRING,
         allowNull: false,
     },
-    api_key: {
+    headers: {
         type: STRING,
-        defaultValue: null,
     },
-    keywords: {
+    params: {
         type: STRING,
-        validate: {
-            notEmpty: true,
-        }
     },
-    validate_function: {
+    fields: {
         type: STRING,
         validate: {
             notEmpty: true,
         }
     },
-
+    html: {
+        type: BOOLEAN,
+        validate: {
+            notEmpty: true,
+        }
+    },
 });
 
 module.exports = Url;

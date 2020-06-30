@@ -1,35 +1,55 @@
 const express = require('express');
+const helmet = require('helmet');
+const passport = require('passport');
 const env = require('dotenv');
 const morgan = require('morgan');
 const path = require('path');
+const cookieSession = require('cookie-session');
 const { connection } = require('./src/models');
 
 if (process.env.NODE_ENV === 'development') {
     env.config();
 };
-
-const publisher_options = {
-    host: process.env.MQ_HOST,
-    port: process.env.MQ_PORT,
-    password: process.env.MQ_PASS,
-};
-
-const publisher = require('redis').createClient(publisher_options);
+require('./src/routes/passport-setup');
 
 const PORT = process.env.PORT || 3000;
 
 const app = express();
+app.use(helmet());
 app.use(express.static(path.join(__dirname, './public')));
 app.use(express.json());
+
+app.use(cookieSession({
+    name: 'kyprojectdemo-session',
+    secret: process.env.APP_SKEY,
+    maxAge: (Math.pow(10, 6)*3.6),
+    secure: process.env.NODE_ENV !== 'development',
+}));
+
+app.use(passport.initialize());
+
+app.use(passport.session());
+
 app.use(morgan('combined'));
+
 app.use('/', require('./src/routes'));
 
-app.get('*', (_, res) => {
+app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, './public', 'index.html'));
 });
 
-const start_server = () => connection
-    .sync({force: true})
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send("Something broke")
+});
+
+const startServer = () => connection
+    .sync({force: (process.env.NODE_ENV === 'development' || process.env.SYNC)})
+    .then(() => {
+        const seed = require('./src/models/seed')
+        return seed
+    })
+    .then(seed => seed())
     .then(() => {
         app.listen(PORT, () => {
             console.log('Listen: ', PORT)
@@ -39,6 +59,4 @@ const start_server = () => connection
         console.error('Error', e)
     });
 
-start_server();
-
-module.exports = publisher;
+startServer();

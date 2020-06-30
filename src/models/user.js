@@ -1,6 +1,5 @@
-const { STRING } = require('sequelize');
+const { STRING, UUID, UUIDV4 } = require('sequelize');
 const db = require('./connect');
-
 
 const User = db.define('user', {
     username: {
@@ -17,7 +16,17 @@ const User = db.define('user', {
             isEmail: true,
         }
     },
-
+    provider: {
+        type: STRING,
+        allowNull: false,
+    },
+}, {
+    indexes: [
+        {
+            unique: true,
+            fields: ['email'],
+        }
+    ]
 });
 
 module.exports = User;
