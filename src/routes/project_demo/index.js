@@ -1,16 +1,15 @@
 const router = require('express').Router();
-const redis = require('redis');
+// const redis = require('redis');
 const { User } = require('../../models');
 
 module.exports = router;
 
-const mq_options = {
-    host: process.env.MQ_HOST,
-    port: process.env.MQ_PORT,
-    password: process.env.MQ_PASS,
-};
-
-const mq = redis.createClient(mq_options);
+// const mq_options = {
+//     host: process.env.MQ_HOST,
+//     port: process.env.MQ_PORT,
+//     password: process.env.MQ_PASS,
+// };
+// const mq = redis.createClient(mq_options);
 
 
 router.use((req, res, next) => {
@@ -20,6 +19,7 @@ router.use((req, res, next) => {
         res.sendStatus(401);
     };
 });
+
 router.get('/session', (req, res, next) => {
     const email = req.user.email;
     User.findOne({
@@ -41,14 +41,14 @@ router.use((req, res, next) => {
     if (res.task_obj && res.url_obj) {
         const { task_obj, url_obj, user_obj } = res
         if (res.kill_task) {
-            res.json({message: 'received', id: task_obj.id})
-        } else {
-            res.json({message: 'received', id: task_obj.id});
-            mq.rpush('tasks', JSON.stringify({task_obj, url_obj, user_obj}));
-        }
+            console.log('stop task')
+            // mq.rpush('tasks', JSON.stringify({task_obj, url_obj, user_obj}));
+        } 
+        console.log(res.task_obj, res.url_obj)
+        res.json({message: 'received', id: task_obj.id})
     } else if (res.create_message) {
         const { channel, message } = res.create_message;
-        mq.publish(channel, message);
+        // mq.publish(channel, message);
         res.json({ message: 'received'});
     } else {
         next();

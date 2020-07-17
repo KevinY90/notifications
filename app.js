@@ -44,12 +44,11 @@ app.use((err, req, res, next) => {
 });
 
 const startServer = () => connection
-    .sync({force: (process.env.NODE_ENV === 'development' || process.env.SYNC)})
+    // .sync({force: (process.env.NODE_ENV === 'development' || process.env.SYNC)})
+    .sync({force: true})
     .then(() => {
-        const seed = require('./src/models/seed')
-        return seed
+        const seed = require('./src/models/seed')()
     })
-    .then(seed => seed())
     .then(() => {
         app.listen(PORT, () => {
             console.log('Listen: ', PORT)
