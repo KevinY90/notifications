@@ -57,9 +57,25 @@ router.post('/start', (req, res, next) => {
         include: [{model: User}, {model: Url}],
     })
     .then(task => {
-        console.log(task.dataValues)
-        console.log(task.dataValues.url.dataValues)
-        console.log(task.dataValues.user.dataValues)
+        const data = task.dataValues;
+        res.task = {
+            id: data.id,
+            description: data.description,
+            interval: data.interval,
+            completed: data.completed,
+            notification_message: data.notification_message,
+            active: data.active,
+            callCount: data.callCount,
+            createdAt: data.createdAt,
+            updatedAt: data.updatedAt,
+        };
+        res.user = data.user.dataValues;
+        res.url = data.url.dataValues;
+        res.killTask = data.active === true
+        next()
+    })
+    .catch(e => {
+        next(e);
     })
 })
 

@@ -3,6 +3,7 @@ import * as types from '../actions/actionTypes';
 const authState= {
     accessKey: '',
     signedIn: false,
+    demo: false,
 };
 
 const auth = (state=authState, action) => {
@@ -16,6 +17,11 @@ const auth = (state=authState, action) => {
             return {
                 ...state,
                 signedIn: true,
+            };
+        case types.IS_DEMO:
+            return {
+                ...state,
+                demo: action.demo,
             };
         case types.EXISTING_USER:
             return {

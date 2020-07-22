@@ -7,8 +7,9 @@
     "heroku-prebuild": "npm install",
     "heroku-postbuild": "webpack",
     "test": "test",
-    "start": "npm run build-dev & NODE_ENV=development nodemon --watch src -e js,html app.js",
-    "build-dev": "webpack"
+    "dev": "npm run build-dev & NODE_ENV=development nodemon --watch src -e js,html app.js",
+    "build-dev": "webpack",
+    "start": "node app.js"
   },
   "author": "Kevin Yu",
   "license": "ISC",

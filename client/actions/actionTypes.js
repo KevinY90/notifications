@@ -28,3 +28,4 @@ export const JOB_CREATE_ERROR = 'JOB_CREATE_ERROR';
 export const EXISTING_USER = 'EXISTING_USER';
 export const USER_LOGOUT = 'USER_LOGOUT';
 export const TASK_START_STOP = 'TASK_START_STOP';
+export const IS_DEMO = 'IS_DEMO';

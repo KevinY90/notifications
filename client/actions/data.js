@@ -86,6 +86,8 @@ export const createJob = history => async (dispatch, getState) => {
         await axios.post('/api/tasks/create', taskObj);
         dispatch(jobCreated());
         dispatch(clearFormData());
+        dispatch(fetchUserTasks(user.id))
+        dispatch(fetchUserSavedUrls(user.id))
         history.push('/dashboard');
     } catch(e) {
         console.error(e);
