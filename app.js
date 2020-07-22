@@ -44,7 +44,6 @@ app.use((err, req, res, next) => {
 });
 
 const startServer = () => connection
-    // .sync({force: (process.env.NODE_ENV === 'development' || process.env.SYNC)})
     .sync({force: true})
     .then(() => {
         const seed = require('./src/models/seed')()
