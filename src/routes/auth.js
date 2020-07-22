@@ -5,6 +5,28 @@ const { Key, User } = require('../models');
 
 module.exports = router;
 
+router.post('/demo', (req, res, next) => {
+    if (process.env.DEMO) {
+        const demo = process.env.DEMO_ACC;
+        User.findOne({
+            where: { 
+                email: demo,
+            }
+        })
+        .then(demo => res.json(demo))
+        .catch(e => {
+            next(e)
+        })
+    };
+});
+
+router.get('/mode', (req, res, next) => {
+    const isDemo = process.env.DEMO;
+    return res.json({
+        demo: isDemo !== null || isDemo !== undefined
+    })
+});
+
 router.post('/key', (req, res) => {
     const accessKey = req.body;
     Key.findOne({

@@ -9,17 +9,18 @@ const mq_options = {
     port: process.env.MQ_PORT,
     password: process.env.MQ_PASS,
 };
-
 const mq = redis.createClient(mq_options);
 
 
+
 router.use((req, res, next) => {
-    if (req.user) {
+    if (req.user || process.env.DEMO) {
         next();
     } else {
         res.sendStatus(401);
     };
 });
+
 router.get('/session', (req, res, next) => {
     const email = req.user.email;
     User.findOne({
@@ -38,14 +39,12 @@ router.use('/tasks', require('./tasks'));
 router.use('/urls', require('./urls'));
 router.use('/resources', require('./resources'));
 router.use((req, res, next) => {
-    if (res.task_obj && res.url_obj) {
-        const { task_obj, url_obj, user_obj } = res
-        if (res.kill_task) {
-            res.json({message: 'received', id: task_obj.id})
-        } else {
-            res.json({message: 'received', id: task_obj.id});
-            mq.rpush('tasks', JSON.stringify({task_obj, url_obj, user_obj}));
-        }
+    if (res.task) {
+        const { task, url, user } = res;
+        if (res.killTask) {
+            mq.rpush('tasks', JSON.stringify({task, url, user}));
+        };
+        res.json({message: 'received', id: task.id})
     } else if (res.create_message) {
         const { channel, message } = res.create_message;
         mq.publish(channel, message);

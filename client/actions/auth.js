@@ -6,6 +6,26 @@ export const accessKeyInput = accessKey => ({type: types.ACCESS_KEY_INPUT, acces
 
 export const accessKeyValid = user => ({ type: types.ACCESS_KEY_VALID, user });
 
+export const appMode = demo => ({ type: types.IS_DEMO, demo});
+
+export const demoSignin = () => async dispatch => {
+    try {
+        const user = await axios.post('/auth/demo', {});
+        dispatch(validSession(user.data));
+    } catch(e) {
+        console.error(e);
+    };
+};
+
+export const isDemo = () => async dispatch => {
+    try{ 
+        const mode = await axios.get('/auth/mode');
+        if (mode.demo) dispatch(appMode(true));
+    } catch(e) {
+        console.error(e)
+    };
+};
+
 export const submitAccessKey = () => async (dispatch, getState) => {
     const { auth } = getState();
     try {
@@ -28,6 +48,6 @@ export const isValidSession = () => async dispatch => {
         const { id, email } = user.data;
         dispatch(validSession({id, email}));
     } catch(e) {
-        console.log();
+        console.error(e);
     };
 };

@@ -47,39 +47,37 @@ router.post('/create', (req, res) => {
     })
 });
 
+
 router.post('/start', (req, res, next) => {
-    console.log(req.body);
     const id = parseInt(req.body.id)
-    Task.findByPk(id)
+    Task.findOne({
+        where: {
+            id
+        },
+        include: [{model: User}, {model: Url}],
+    })
     .then(task => {
-        res.task_obj = task.dataValues;
-        if (res.task_obj.active) res.kill_task = true;
-        return task
-    })
-    .then(task => Task.update({active: !task.active}, {
-        where: { id: task.id}
-    }))
-    .then(task => Url.findOne({
-        where: task.urlId
-    }))
-    .then(url => {
-        res.url_obj = url.dataValues
-        return url.userId
-    })
-    .then(userId => User.findOne({
-        userId
-    }))
-    .then(user => {
-        res.user_obj = user.dataValues;
+        const data = task.dataValues;
+        res.task = {
+            id: data.id,
+            description: data.description,
+            interval: data.interval,
+            completed: data.completed,
+            notification_message: data.notification_message,
+            active: data.active,
+            callCount: data.callCount,
+            createdAt: data.createdAt,
+            updatedAt: data.updatedAt,
+        };
+        res.user = data.user.dataValues;
+        res.url = data.url.dataValues;
+        res.killTask = data.active === true
         next()
     })
     .catch(e => {
-        console.error(e)
-        res.status(400).send({
-            error: e.errors
-        })
+        next(e);
     })
-});
+})
 
 router.put('/update/:id', (req, res) => {
     const taskId = req.params.id

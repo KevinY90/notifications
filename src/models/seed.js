@@ -2,6 +2,9 @@ const { User, Url, Task, Key, AvailableFunction, Notification } = require('./');
 
 
 const userData = [{
+    email: 'test@test.com',
+    username: 'Demo',
+    provider: 'Demo'
 }];
 
 const urlData = [
@@ -11,7 +14,6 @@ const taskData = [
 ];
 
 const keys = [
-
 ];
 
 const functions = [
@@ -51,7 +53,10 @@ const functions = [
 const notifications = [
 ];
 
-const seed = () => Promise.all(functions.map(fn => AvailableFunction.create(fn)));
 
+const seed = () => 
+    Promise.all(userData.map(user => User.create(user))).then(
+    Promise.all(functions.map(fn => AvailableFunction.create(fn)))
+);
 
 module.exports = seed;

@@ -55,11 +55,6 @@ const UrlView = props => {
                                             return <Typography key={`${name}-${value}`}>{name}: {value}</Typography>
                                         }) : ''
                                     }
-                                    <Button 
-                                    id={`${urlObj.id}`} 
-                                    variant='contained'>
-                                        Edit
-                                    </Button>
                                 </Box>
                             </ListItem>
                         </Paper>

@@ -6,8 +6,9 @@ import Auth from '../components/Auth';
 
 export default class Main extends Component {
     componentDidMount() {
-        const { existingSession } = this.props;
+        const { existingSession, getAppMode } = this.props;
         existingSession();
+        getAppMode();
     };
 
     render() {
